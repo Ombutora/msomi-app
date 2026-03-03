@@ -1,0 +1,2465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Msomi App</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --green-dark: #1B5E20;
+      --green-main: #2E7D32;
+      --green-primary: #4CAF50;
+      --green-light: #66BB6A;
+      --green-xlight: #A5D6A7;
+      --green-pale: #E8F5E9;
+      --green-ultra: #F1F8E9;
+      --white: #FFFFFF;
+      --offwhite: #FAFAFA;
+      --grey-light: #F5F5F5;
+      --grey: #E0E0E0;
+      --text-dark: #1A2E1A;
+      --text-mid: #3D5A3D;
+      --text-light: #6B8E6B;
+      --shadow-sm: 0 2px 8px rgba(46, 125, 50, 0.08);
+      --shadow-md: 0 4px 20px rgba(46, 125, 50, 0.12);
+      --shadow-lg: 0 8px 40px rgba(46, 125, 50, 0.18);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(160deg, #E8F5E9 0%, #F9FBE7 40%, #FFFFFF 100%);
+      min-height: 100vh;
+      color: var(--text-dark);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -200px;
+      left: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(76, 175, 80, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -150px;
+      right: -150px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(102, 187, 106, 0.07) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* SVG leaf pattern overlay */
+    .leaf-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 5 Q45 20 30 35 Q15 20 30 5Z' fill='%232E7D32'/%3E%3C/svg%3E");
+      background-size: 60px 60px;
+    }
+
+    /* ─── TOAST ─── */
+    #toast-container {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: var(--green-main);
+      color: white;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      font-size: 0.88rem;
+      font-weight: 500;
+      max-width: 320px;
+      animation: slideIn 0.4s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .toast i {
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .toast.warning {
+      background: #E65100;
+    }
+
+    .toast.info {
+      background: #0277BD;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+    }
+
+    /* ─── NAVBAR ─── */
+    #navbar {
+      display: none;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--green-main);
+      padding: 0 24px;
+      height: 64px;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 16px rgba(27, 94, 32, 0.25);
+    }
+
+    #navbar .brand {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #navbar .brand .leaf-icon {
+      font-size: 1.3rem;
+    }
+
+    #navbar .nav-links {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    #navbar .nav-links button {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.8);
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #navbar .nav-links button:hover,
+    #navbar .nav-links button.active {
+      background: rgba(255, 255, 255, 0.18);
+      color: white;
+    }
+
+    #navbar .nav-links button.active {
+      background: rgba(255, 255, 255, 0.22);
+      color: white;
+      font-weight: 600;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-badge {
+      background: rgba(255, 255, 255, 0.18);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    #logout-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    #logout-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* ─── PAGE SYSTEM ─── */
+    .page {
+      display: none;
+      position: relative;
+      z-index: 1;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* ─── LOGIN ─── */
+    #login-page {
+      min-height: 100vh;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    #login-page.active {
+      display: flex;
+    }
+
+    .login-wrap {
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .login-hero {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .login-logo {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, var(--green-main), var(--green-light));
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .login-hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.4rem;
+      color: var(--green-main);
+      line-height: 1.1;
+    }
+
+    .login-hero p {
+      color: var(--text-light);
+      font-size: 0.92rem;
+      margin-top: 6px;
+    }
+
+    .login-card {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      padding: 36px 32px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(76, 175, 80, 0.12);
+    }
+
+    .role-selector {
+      margin-bottom: 28px;
+    }
+
+    .role-selector h3 {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-light);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .role-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .role-btn {
+      padding: 14px 8px;
+      border: 2px solid var(--grey);
+      border-radius: var(--radius-md);
+      background: var(--offwhite);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.22s;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .role-btn:hover {
+      border-color: var(--green-light);
+      background: var(--green-pale);
+    }
+
+    .role-btn.selected {
+      border-color: var(--green-primary);
+      background: var(--green-pale);
+    }
+
+    .role-btn i {
+      display: block;
+      font-size: 1.5rem;
+      color: var(--green-primary);
+      margin-bottom: 6px;
+    }
+
+    .role-btn span {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-mid);
+    }
+
+    .login-form {
+      display: none;
+    }
+
+    .login-form.visible {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-mid);
+      margin-bottom: 6px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--grey);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-family: 'Poppins', sans-serif;
+      transition: border-color 0.2s;
+      background: var(--offwhite);
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--green-primary);
+      background: white;
+    }
+
+    .hint-text {
+      font-size: 0.76rem;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--green-main), var(--green-primary));
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.22s;
+      box-shadow: 0 4px 14px rgba(46, 125, 50, 0.3);
+      letter-spacing: 0.3px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    /* ─── CONTAINER ─── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 20px;
+    }
+
+    .page-header {
+      margin-bottom: 28px;
+    }
+
+    .page-header h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.9rem;
+      color: var(--green-main);
+    }
+
+    .page-header p {
+      color: var(--text-light);
+      font-size: 0.88rem;
+      margin-top: 4px;
+    }
+
+    /* ─── CARDS ─── */
+    .card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(76, 175, 80, 0.1);
+      transition: box-shadow 0.2s;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    /* ─── TIMETABLE ─── */
+    .day-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .day-tab {
+      padding: 8px 18px;
+      border: 2px solid var(--grey);
+      border-radius: 30px;
+      background: white;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.2s;
+      color: var(--text-mid);
+    }
+
+    .day-tab:hover {
+      border-color: var(--green-light);
+      color: var(--green-main);
+    }
+
+    .day-tab.active {
+      background: var(--green-main);
+      border-color: var(--green-main);
+      color: white;
+    }
+
+    .class-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      border-left: 5px solid var(--green-primary);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 14px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 16px;
+      align-items: center;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .class-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 80px;
+      height: 100%;
+      background: linear-gradient(to left, var(--green-pale), transparent);
+    }
+
+    .class-card:hover {
+      transform: translateX(3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .class-time {
+      text-align: center;
+      min-width: 64px;
+    }
+
+    .class-time .time-start {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--green-main);
+    }
+
+    .class-time .time-end {
+      font-size: 0.75rem;
+      color: var(--text-light);
+    }
+
+    .class-info .course-code {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--green-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .class-info .course-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin: 2px 0;
+    }
+
+    .class-info .class-meta {
+      font-size: 0.82rem;
+      color: var(--text-light);
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .class-info .class-meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .class-actions {
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .btn-sm {
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-green {
+      background: var(--green-primary);
+      color: white;
+    }
+
+    .btn-green:hover {
+      background: var(--green-main);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--green-primary);
+      color: var(--green-main);
+    }
+
+    .btn-outline:hover {
+      background: var(--green-pale);
+    }
+
+    .btn-danger {
+      background: #FFEBEE;
+      border: 1.5px solid #EF9A9A;
+      color: #C62828;
+    }
+
+    .btn-danger:hover {
+      background: #FFCDD2;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-light);
+    }
+
+    .empty-state i {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      color: var(--green-xlight);
+    }
+
+    /* ─── NOTIFICATIONS ─── */
+    .notif-item {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      border-left: 4px solid var(--green-primary);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .notif-item.unread {
+      background: var(--green-pale);
+      border-left-color: var(--green-main);
+    }
+
+    .notif-item.announcement {
+      border-left-color: #FF9800;
+    }
+
+    .notif-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--green-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--green-main);
+      font-size: 1rem;
+    }
+
+    .notif-item.announcement .notif-icon {
+      background: #FFF3E0;
+      color: #E65100;
+    }
+
+    .notif-body {
+      flex: 1;
+    }
+
+    .notif-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+    }
+
+    .notif-sub {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    .notif-time {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    /* ─── REVIEWS ─── */
+    .stars-input {
+      display: flex;
+      gap: 6px;
+    }
+
+    .star-btn {
+      font-size: 1.6rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: var(--grey);
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .star-btn.active,
+    .star-btn:hover {
+      color: #FDD835;
+      transform: scale(1.1);
+    }
+
+    .review-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(76, 175, 80, 0.1);
+      margin-bottom: 14px;
+    }
+
+    .review-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .reviewer-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green-main), var(--green-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .review-stars {
+      color: #FDD835;
+      font-size: 1rem;
+    }
+
+    .stars-display {
+      display: inline-flex;
+      gap: 2px;
+    }
+
+    .review-comment {
+      font-size: 0.88rem;
+      color: var(--text-mid);
+      font-style: italic;
+    }
+
+    /* ─── FORMS ─── */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media(max-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--grey);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-family: 'Poppins', sans-serif;
+      background: var(--offwhite);
+      transition: border-color 0.2s;
+    }
+
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--green-primary);
+      background: white;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* ─── STATS ─── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(76, 175, 80, 0.1);
+    }
+
+    .stat-card .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--green-main), var(--green-primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-card .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    /* ─── SETTINGS ─── */
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--grey);
+    }
+
+    .settings-row:last-child {
+      border-bottom: none;
+    }
+
+    .settings-label h4 {
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+
+    .settings-label p {
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    .settings-row input[type=range] {
+      accent-color: var(--green-primary);
+      width: 140px;
+    }
+
+    .settings-row input[type=number] {
+      width: 80px;
+      padding: 8px 12px;
+      border: 2px solid var(--grey);
+      border-radius: var(--radius-sm);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+    }
+
+    .toggle {
+      width: 44px;
+      height: 24px;
+      background: var(--grey);
+      border-radius: 12px;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .toggle.on {
+      background: var(--green-primary);
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: white;
+      transition: left 0.2s;
+    }
+
+    .toggle.on::after {
+      left: 23px;
+    }
+
+    /* ─── ANNOUNCEMENTS ─── */
+    .announcement-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tag-holiday {
+      background: #FFF9C4;
+      color: #F57F17;
+    }
+
+    .tag-cancel {
+      background: #FFEBEE;
+      color: #C62828;
+    }
+
+    .tag-deadline {
+      background: #E3F2FD;
+      color: #1565C0;
+    }
+
+    .tag-general {
+      background: var(--green-pale);
+      color: var(--green-main);
+    }
+
+    /* ─── RESOURCES ─── */
+    .resource-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: white;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 10px;
+      border: 1px solid rgba(76, 175, 80, 0.1);
+    }
+
+    .resource-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      background: var(--green-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--green-main);
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .resource-info {
+      flex: 1;
+    }
+
+    .resource-info .r-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .resource-info .r-sub {
+      font-size: 0.78rem;
+      color: var(--text-light);
+    }
+
+    .resource-info a {
+      color: var(--green-main);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .resource-info a:hover {
+      text-decoration: underline;
+    }
+
+    /* ─── TABS ─── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--grey);
+      padding-bottom: 0;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      border: none;
+      background: none;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-light);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      color: var(--green-main);
+    }
+
+    .tab-btn.active {
+      color: var(--green-main);
+      border-bottom-color: var(--green-primary);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* ─── SECTION DIVIDER ─── */
+    .section-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-light);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--grey);
+    }
+
+    /* ─── BADGE ─── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      background: var(--green-primary);
+      color: white;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0 6px;
+    }
+
+    .badge.red {
+      background: #E53935;
+    }
+
+    /* ─── GRADE BARS ─── */
+    .grade-bar-wrap {
+      margin-bottom: 14px;
+    }
+
+    .grade-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      margin-bottom: 4px;
+    }
+
+    .grade-bar-label span:last-child {
+      font-weight: 700;
+      color: var(--green-main);
+    }
+
+    .grade-bar-track {
+      height: 8px;
+      background: var(--grey);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .grade-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--green-primary), var(--green-light));
+      transition: width 1s ease;
+    }
+
+    /* ─── MODAL ─── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      position: relative;
+      animation: popIn 0.3s ease;
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0.93);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--grey-light);
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.4rem;
+      color: var(--green-main);
+      margin-bottom: 20px;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media(max-width: 768px) {
+      #navbar .nav-links {
+        display: none;
+      }
+
+      .class-card {
+        grid-template-columns: auto 1fr;
+      }
+
+      .class-actions {
+        flex-direction: row;
+        grid-column: 1 / -1;
+      }
+
+      .role-btns {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ─── HAMBURGER ─── */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+
+    .hamburger span {
+      width: 22px;
+      height: 2px;
+      background: white;
+      border-radius: 2px;
+    }
+
+    @media(max-width: 768px) {
+      .hamburger {
+        display: flex;
+      }
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: var(--green-main);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .mobile-menu.open {
+      display: flex;
+    }
+
+    .mobile-menu button {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: white;
+      padding: 14px 40px;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      width: 220px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .mobile-menu .close-menu {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ─── QUOTE BANNER ─── */
+    .quote-banner {
+      position: relative;
+      background: linear-gradient(135deg, var(--green-main) 0%, #1B5E20 60%, #2E7D32 100%);
+      border-radius: var(--radius-xl);
+      padding: 36px 40px 36px 48px;
+      margin-bottom: 28px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(27, 94, 32, 0.22);
+    }
+
+    .quote-banner::before {
+      content: '\201C';
+      position: absolute;
+      top: -20px;
+      left: 16px;
+      font-family: 'DM Serif Display', serif;
+      font-size: 10rem;
+      color: rgba(255, 255, 255, 0.07);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .quote-banner::after {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      right: -60px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(102, 187, 106, 0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .quote-leaf-deco {
+      position: absolute;
+      top: 12px;
+      right: 24px;
+      font-size: 3.5rem;
+      opacity: 0.12;
+      pointer-events: none;
+      transform: rotate(20deg);
+    }
+
+    .quote-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.22rem;
+      font-style: italic;
+      color: rgba(255, 255, 255, 0.97);
+      line-height: 1.65;
+      max-width: 680px;
+      position: relative;
+      z-index: 1;
+      letter-spacing: 0.01em;
+    }
+
+    .quote-text .highlight-word {
+      color: #A5D6A7;
+      font-style: normal;
+    }
+
+    .quote-attribution {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .quote-line {
+      width: 32px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 2px;
+    }
+
+    .quote-author {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+    }
+
+    .quote-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: rgba(255, 255, 255, 0.8);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-left: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="leaf-bg"></div>
+
+  <!-- TOAST -->
+  <div id="toast-container"></div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="brand"><span class="leaf-icon">🌿</span> Msomi</div>
+    <div class="nav-links" id="nav-links"></div>
+    <div class="nav-right">
+      <span class="user-badge" id="user-badge"></span>
+      <button id="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      <button class="hamburger" onclick="toggleMobile()"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobile-menu">
+    <button class="close-menu" onclick="toggleMobile()"><i class="fas fa-times"></i></button>
+    <div id="mobile-nav-links"></div>
+  </div>
+
+  <!-- PAGES -->
+  <div id="login-page" class="page active">
+    <div class="login-wrap">
+      <div class="login-hero">
+        <div class="login-logo">🌿</div>
+        <h1>Msomi App</h1>
+        <p>Smart class management for modern schools</p>
+      </div>
+      <div class="login-card">
+        <div class="role-selector">
+          <h3>Select Your Role</h3>
+          <div class="role-btns">
+            <div class="role-btn" onclick="selectRole('student')">
+              <i class="fas fa-user-graduate"></i><span>Student</span>
+            </div>
+            <div class="role-btn" onclick="selectRole('teacher')">
+              <i class="fas fa-chalkboard-teacher"></i><span>Teacher</span>
+            </div>
+            <div class="role-btn" onclick="selectRole('rep')">
+              <i class="fas fa-user-tie"></i><span>Class Rep</span>
+            </div>
+          </div>
+        </div>
+        <div class="login-form" id="login-form">
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="username-input" placeholder="Enter username">
+            <div class="hint-text" id="login-hint"></div>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password-input" placeholder="Enter password"
+              onkeydown="if(event.key==='Enter')doLogin()">
+          </div>
+          <button class="btn-primary" onclick="doLogin()">Sign In <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMETABLE -->
+  <div id="timetable-page" class="page">
+    <div class="container">
+      <div class="page-header">
+        <h2><i class="fas fa-calendar-alt" style="color:var(--green-primary);margin-right:10px"></i>Timetable</h2>
+        <p id="tt-subtitle">Your personalised schedule</p>
+      </div>
+      <div class="day-tabs" id="day-tabs"></div>
+      <div id="timetable-list"></div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div id="notifications-page" class="page">
+    <div class="container">
+      <div class="page-header">
+        <h2><i class="fas fa-bell" style="color:var(--green-primary);margin-right:10px"></i>Notifications</h2>
+        <p>Alerts, reminders and announcements</p>
+      </div>
+      <div id="notif-list"></div>
+    </div>
+  </div>
+
+  <!-- REVIEWS -->
+  <div id="reviews-page" class="page">
+    <div class="container">
+      <div class="page-header">
+        <h2><i class="fas fa-star" style="color:var(--green-primary);margin-right:10px"></i>Reviews</h2>
+        <p id="review-subtitle">Rate classes and view feedback</p>
+      </div>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchReviewTab('rate')">Rate a Class</button>
+        <button class="tab-btn" onclick="switchReviewTab('received')">My Ratings</button>
+      </div>
+      <div class="tab-panel active" id="tab-rate">
+        <div id="rate-form-area"></div>
+      </div>
+      <div class="tab-panel" id="tab-received">
+        <div id="received-reviews"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLASS REP DASHBOARD -->
+  <div id="rep-dashboard-page" class="page">
+    <div class="container">
+      <div class="page-header">
+        <h2><i class="fas fa-tachometer-alt" style="color:var(--green-primary);margin-right:10px"></i>Class Rep
+          Dashboard</h2>
+        <p>Manage your group's schedule and resources</p>
+      </div>
+      <div class="quote-banner">
+        <span class="quote-leaf-deco">🌿</span>
+        <p class="quote-text">
+          When <span class="highlight-word">transparency</span> flows between teachers and students, classrooms
+          transform from places of instruction into communities of shared purpose — where every voice is heard, every
+          effort is seen, and <span class="highlight-word">engagement</span> becomes the natural language of learning.
+        </p>
+        <div class="quote-attribution">
+          <div class="quote-line"></div>
+          <span class="quote-author">Msomi App <div class="stats-grid" id="rep-stats"></div>mdash; Class Rep
+            Dashboard</span>
+          <span class="quote-pill"><i class="fas fa-leaf"></i> Empowering Education</span>
+        </div>
+      </div>
+      <div class="stats-grid" id="rep-stats"></div>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchRepTab('schedule')"><i class="fas fa-plus-circle"></i>
+          Schedule</button>
+        <button class="tab-btn" onclick="switchRepTab('announcements')"><i class="fas fa-bullhorn"></i>
+          Announcements</button>
+        <button class="tab-btn" onclick="switchRepTab('resources')"><i class="fas fa-link"></i> Resources</button>
+        <button class="tab-btn" onclick="switchRepTab('reports')"><i class="fas fa-chart-bar"></i> Reports</button>
+        <button class="tab-btn" onclick="switchRepTab('analytics')"><i class="fas fa-chart-line"></i> Analytics</button>
+      </div>
+      <div class="tab-panel active" id="rep-tab-schedule">
+        <div class="card" style="margin-bottom:20px">
+          <h3 style="font-size:1rem;font-weight:700;color:var(--green-main);margin-bottom:18px"><i
+              class="fas fa-plus"></i> Add / Edit Class</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Course</label>
+              <select id="rep-course">
+                <option value="">Select course...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Lecturer</label>
+              <select id="rep-lecturer">
+                <option value="">Select lecturer...</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Day</label>
+              <select id="rep-day">
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Venue</label>
+              <input type="text" id="rep-venue" placeholder="e.g. Room 204B">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Start Time</label>
+              <input type="time" id="rep-start">
+            </div>
+            <div class="form-group">
+              <label>End Time</label>
+              <input type="time" id="rep-end">
+            </div>
+          </div>
+          <input type="hidden" id="rep-edit-id">
+          <button class="btn-primary" style="width:auto;padding:12px 32px" onclick="saveRepClass()">
+            <i class="fas fa-save"></i> Save Class
+          </button>
+          <button class="btn-sm btn-outline" style="margin-left:10px" onclick="clearRepForm()">Clear</button>
+        </div>
+        <div class="section-title">Scheduled Classes</div>
+        <div id="rep-class-list"></div>
+      </div>
+      <div class="tab-panel" id="rep-tab-announcements">
+        <div class="card" style="margin-bottom:20px">
+          <h3 style="font-size:1rem;font-weight:700;color:var(--green-main);margin-bottom:18px"><i
+              class="fas fa-bullhorn"></i> Post Announcement</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" id="ann-title" placeholder="Announcement title">
+            </div>
+            <div class="form-group">
+              <label>Type</label>
+              <select id="ann-type">
+                <option value="general">General</option>
+                <option value="holiday">Holiday / Time-off</option>
+                <option value="cancel">Class Cancellation</option>
+                <option value="deadline">Assignment Deadline</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea id="ann-body" placeholder="Enter announcement details..."></textarea>
+          </div>
+          <button class="btn-primary" style="width:auto;padding:12px 28px" onclick="postAnnouncement()">
+            <i class="fas fa-paper-plane"></i> Post
+          </button>
+        </div>
+        <div class="section-title">Posted Announcements</div>
+        <div id="ann-list"></div>
+      </div>
+      <div class="tab-panel" id="rep-tab-resources">
+        <div class="card" style="margin-bottom:20px">
+          <h3 style="font-size:1rem;font-weight:700;color:var(--green-main);margin-bottom:18px"><i
+              class="fas fa-link"></i> Add Resource</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" id="res-title" placeholder="e.g. Week 3 Notes">
+            </div>
+            <div class="form-group">
+              <label>Course</label>
+              <select id="res-course"></select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Link (Google Drive / URL)</label>
+            <input type="url" id="res-link" placeholder="https://drive.google.com/...">
+          </div>
+          <button class="btn-primary" style="width:auto;padding:12px 28px" onclick="addResource()">
+            <i class="fas fa-plus"></i> Add Resource
+          </button>
+        </div>
+        <div class="section-title">Resources</div>
+        <div id="resource-list"></div>
+      </div>
+      <div class="tab-panel" id="rep-tab-reports">
+        <div id="rep-reports-area"></div>
+      </div>
+      <div class="tab-panel" id="rep-tab-analytics">
+        <div id="engagement-analytics-area"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div id="settings-page" class="page">
+    <div class="container">
+      <div class="page-header">
+        <h2><i class="fas fa-cog" style="color:var(--green-primary);margin-right:10px"></i>Settings</h2>
+        <p>Customise your Msomi experience</p>
+      </div>
+      <div class="card">
+        <div class="settings-row">
+          <div class="settings-label">
+            <h4>Notification Lead Time</h4>
+            <p>Alert me this many minutes before class</p>
+          </div>
+          <input type="number" id="lead-time" value="30" min="5" max="120" onchange="saveSettings()">
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">
+            <h4>Show Toast Notifications</h4>
+            <p>Pop-up alerts for class reminders</p>
+          </div>
+          <div class="toggle on" id="toast-toggle" onclick="toggleSetting('toast-toggle')"></div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">
+            <h4>Sound Alerts</h4>
+            <p>Play a chime before class starts</p>
+          </div>
+          <div class="toggle" id="sound-toggle" onclick="toggleSetting('sound-toggle')"></div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">
+            <h4>Dark Mode</h4>
+            <p>Coming soon</p>
+          </div>
+          <div class="toggle" style="opacity:0.4;pointer-events:none"></div>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <button class="btn-primary" style="width:auto;padding:12px 32px" onclick="saveSettings()">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVIEW MODAL -->
+  <div class="modal-overlay" id="review-modal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('review-modal')"><i class="fas fa-times"></i></button>
+      <h3 id="modal-title">Review Class</h3>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    // ─── DATA ───────────────────────────────────────────────────────────
+    const DATA_VERSION = '2.1'; // KU Refresh
+    if (loadData('msomi_version', '') !== DATA_VERSION) {
+      localStorage.clear();
+      saveData('msomi_version', DATA_VERSION);
+      // Optional: redirect or reload might be needed but for now we just clear so next loads get defaults
+    }
+
+    const USERS = {
+      student1: { pass: 'stu123', role: 'student', name: 'Amara Osei', group: 'CS-Y2S2' },
+      student2: { pass: 'stu456', role: 'student', name: 'Kofi Mensah', group: 'CS-Y2S2' },
+      teacher1: { pass: 'teach1', role: 'teacher', name: 'Dr. Lawrence Nderu', id: 'l1' },
+      teacher2: { pass: 'teach2', role: 'teacher', name: 'Dr. P. Murithi', id: 'l2' },
+      rep1: { pass: 'rep123', role: 'rep', name: 'Zara Kariuki', group: 'CS-Y2S2' },
+    };
+
+    const COURSES = [
+      { id: 'c1', code: 'ICS2207', name: 'Scientific Computing' },
+      { id: 'c2', code: 'ICS2210', name: 'Systems Analysis & Design' },
+      { id: 'c3', code: 'ICS2305', name: 'Systems Programming' },
+      { id: 'c4', code: 'ICS2218', name: 'Introduction to Quantum Computing' },
+      { id: 'c5', code: 'ICS2266', name: 'Digital Electronics' },
+      { id: 'c6', code: 'ICS2209', name: 'Computer Networks' },
+      { id: 'c7', code: 'ICS2206', name: 'Database Systems' },
+      { id: 'c8', code: 'ICS2211', name: 'Numerical Linear Algebra' },
+    ];
+
+    const LECTURERS = [
+      { id: 'l1', name: 'Dr. Lawrence Nderu' },
+      { id: 'l2', name: 'Dr. P. Murithi' },
+      { id: 'l3', name: 'Dr. Karanja Mwanggi' },
+      { id: 'l4', name: 'Dr. Agnes Mindila' },
+      { id: 'l5', name: 'Dr. Oteri Omae' },
+      { id: 'l6', name: 'Samson Ochinga' },
+      { id: 'l7', name: 'Joan Gichuru' },
+      { id: 'l8', name: 'Martha Gichuki' },
+    ];
+
+    const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+    function loadData(key, def) {
+      try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch { return def; }
+    }
+    function saveData(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+    let classes = loadData('msomi_classes', [
+      { id: 'cl1', courseId: 'c1', lecturerId: 'l1', day: 'Monday', start: '11:00', end: '12:00', venue: 'JKAC 003', group: 'CS-Y2S2' },
+      { id: 'cl2', courseId: 'c1', lecturerId: 'l1', day: 'Monday', start: '12:00', end: '13:00', venue: 'SCC 108', group: 'CS-Y2S2' },
+      { id: 'cl3', courseId: 'c2', lecturerId: 'l2', day: 'Tuesday', start: '07:00', end: '08:00', venue: 'CTC 03', group: 'CS-Y2S2' },
+      { id: 'cl4', courseId: 'c2', lecturerId: 'l2', day: 'Tuesday', start: '09:00', end: '10:00', venue: 'H7 029', group: 'CS-Y2S2' },
+      { id: 'cl5', courseId: 'c3', lecturerId: 'l3', day: 'Tuesday', start: '11:00', end: '12:00', venue: 'H7 029', group: 'CS-Y2S2' },
+      { id: 'cl6', courseId: 'c3', lecturerId: 'l3', day: 'Tuesday', start: '13:00', end: '14:00', venue: 'HRD 305', group: 'CS-Y2S2' },
+      { id: 'cl7', courseId: 'c4', lecturerId: 'l4', day: 'Wednesday', start: '07:00', end: '08:00', venue: 'HRD 206', group: 'CS-Y2S2' },
+      { id: 'cl8', courseId: 'c4', lecturerId: 'l4', day: 'Wednesday', start: '09:00', end: '10:00', venue: 'SCC 108', group: 'CS-Y2S2' },
+      { id: 'cl9', courseId: 'c5', lecturerId: 'l5', day: 'Wednesday', start: '12:00', end: '13:00', venue: 'ELB 014', group: 'CS-Y2S2' },
+      { id: 'cl10', courseId: 'c5', lecturerId: 'l5', day: 'Wednesday', start: '15:00', end: '16:00', venue: 'CTC 202', group: 'CS-Y2S2' },
+      { id: 'cl11', courseId: 'c6', lecturerId: 'l6', day: 'Thursday', start: '07:00', end: '08:00', venue: 'SCC 006', group: 'CS-Y2S2' },
+      { id: 'cl12', courseId: 'c6', lecturerId: 'l6', day: 'Thursday', start: '09:00', end: '10:00', venue: 'SCC 108', group: 'CS-Y2S2' },
+      { id: 'cl13', courseId: 'c7', lecturerId: 'l7', day: 'Thursday', start: '12:00', end: '13:00', venue: 'HRD 110', group: 'CS-Y2S2' },
+      { id: 'cl14', courseId: 'c7', lecturerId: 'l7', day: 'Thursday', start: '15:00', end: '16:00', venue: 'SCC 108', group: 'CS-Y2S2' },
+      { id: 'cl15', courseId: 'c8', lecturerId: 'l8', day: 'Friday', start: '10:00', end: '11:00', venue: 'HRD 20', group: 'CS-Y2S2' },
+    ]);
+
+    let reviews = loadData('msomi_reviews', [
+      { id: 'r1', classId: 'cl1', fromRole: 'student', fromName: 'Amara Osei', toRole: 'teacher', toId: 'T1', rating: 5, comment: 'Excellent class, very engaging!', date: '2024-01-15' },
+      { id: 'r2', classId: 'cl2', fromRole: 'student', fromName: 'Kofi Mensah', toRole: 'teacher', toId: 'T2', rating: 4, comment: 'Good explanation of algorithms.', date: '2024-01-15' },
+      { id: 'r3', classId: 'cl1', fromRole: 'teacher', fromName: 'Dr. Fatima Nkosi', toRole: 'student', toId: 'student1', rating: 4, comment: 'Active participation.', date: '2024-01-15' },
+    ]);
+
+    let notifications = loadData('msomi_notifs', [
+      { id: 'n1', type: 'reminder', text: 'Class starting soon: CS101 with Dr. Fatima Nkosi at Room 101A', time: '08:00 Mon', read: true },
+      { id: 'n2', type: 'announcement', text: 'Assignment 2 deadline: 23 Feb 2025 at midnight', time: 'Yesterday', read: false },
+      { id: 'n3', type: 'reminder', text: 'Class starting soon: CS201 with Prof. James Okello at Room 204B', time: '11:00 Mon', read: false },
+    ]);
+
+    let announcements = loadData('msomi_announcements', [
+      { id: 'a1', title: 'Assignment 2 Deadline', type: 'deadline', body: 'Assignment 2 is due 23 Feb 2025 at midnight. Submit via LMS.', date: '2024-01-14' },
+      { id: 'a2', title: 'Public Holiday', type: 'holiday', body: 'No classes on Friday 16 Feb. Enjoy the long weekend!', date: '2024-01-12' },
+    ]);
+
+    let resources = loadData('msomi_resources', [
+      { id: 'res1', title: 'CS101 Week 3 Slides', courseId: 'C1', link: 'https://drive.google.com', addedBy: 'Zara Kariuki', date: '2024-01-13' },
+      { id: 'res2', title: 'DSA Practice Problems', courseId: 'C2', link: 'https://drive.google.com', addedBy: 'Zara Kariuki', date: '2024-01-14' },
+    ]);
+
+    let settings = loadData('msomi_settings', { leadTime: 30, toast: true, sound: false });
+
+    let currentUser = null;
+    let selectedRole = null;
+    let currentDay = 'Monday';
+    let reviewStarVal = 0;
+    let activeRepTab = 'schedule';
+
+    // ─── AUTH ────────────────────────────────────────────────────────────
+    function selectRole(role) {
+      selectedRole = role;
+      document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+      const form = document.getElementById('login-form');
+      form.classList.add('visible');
+      const hints = { student: 'student1 / stu123 or student2 / stu456', teacher: 'teacher1 / teach1 or teacher2 / teach2', rep: 'rep1 / rep123' };
+      document.getElementById('login-hint').textContent = 'Demo: ' + hints[role];
+    }
+
+    function doLogin() {
+      const u = document.getElementById('username-input').value.trim();
+      const p = document.getElementById('password-input').value.trim();
+      const user = USERS[u];
+      if (!user || user.pass !== p) { showToast('Invalid credentials. Check the hint below the username field.', 'warning'); return; }
+      if (selectedRole && user.role !== selectedRole) { showToast('Role mismatch. Please select the correct role.', 'warning'); return; }
+      currentUser = { username: u, ...user };
+      initApp();
+    }
+
+    function logout() {
+      currentUser = null;
+      document.getElementById('navbar').style.display = 'none';
+      showPage('login-page');
+      document.getElementById('username-input').value = '';
+      document.getElementById('password-input').value = '';
+      document.getElementById('login-form').classList.remove('visible');
+      document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
+    }
+
+    // ─── APP INIT ────────────────────────────────────────────────────────
+    function initApp() {
+      document.getElementById('navbar').style.display = 'flex';
+      document.getElementById('user-badge').textContent = currentUser.name + ' · ' + currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
+      buildNav();
+      populateRepForms();
+      showPage('timetable-page');
+      renderTimetable();
+      scheduleNotifications();
+      document.getElementById('lead-time').value = settings.leadTime;
+      if (settings.toast) document.getElementById('toast-toggle').classList.add('on');
+      else document.getElementById('toast-toggle').classList.remove('on');
+      showToast('Welcome back, ' + currentUser.name + '! 🌿');
+    }
+
+    function buildNav() {
+      const navDefs = [
+        { id: 'timetable-page', icon: 'fa-calendar-alt', label: 'Timetable', roles: ['student', 'teacher', 'rep'] },
+        { id: 'notifications-page', icon: 'fa-bell', label: 'Notifications', roles: ['student', 'teacher', 'rep'] },
+        { id: 'reviews-page', icon: 'fa-star', label: 'Reviews', roles: ['student', 'teacher', 'rep'] },
+        { id: 'rep-dashboard-page', icon: 'fa-tachometer-alt', label: 'Dashboard', roles: ['rep'] },
+        { id: 'settings-page', icon: 'fa-cog', label: 'Settings', roles: ['student', 'teacher', 'rep'] },
+      ];
+      const role = currentUser.role;
+      const links = navDefs.filter(n => n.roles.includes(role));
+      const html = links.map(n => `<button onclick="navTo('${n.id}')" id="nav-${n.id}"><i class="fas ${n.icon}"></i>${n.label}</button>`).join('');
+      document.getElementById('nav-links').innerHTML = html;
+      const mobileHtml = links.map(n => `<button onclick="navTo('${n.id}');toggleMobile()"><i class="fas ${n.icon}"></i>${n.label}</button>`).join('');
+      document.getElementById('mobile-nav-links').innerHTML = mobileHtml;
+    }
+
+    function navTo(pageId) {
+      showPage(pageId);
+      document.querySelectorAll('#nav-links button').forEach(b => b.classList.remove('active'));
+      const btn = document.getElementById('nav-' + pageId);
+      if (btn) btn.classList.add('active');
+      if (pageId === 'timetable-page') renderTimetable();
+      if (pageId === 'notifications-page') renderNotifications();
+      if (pageId === 'reviews-page') renderReviews();
+      if (pageId === 'rep-dashboard-page') renderRepDashboard();
+      if (pageId === 'settings-page') {
+        document.getElementById('lead-time').value = settings.leadTime;
+      }
+    }
+
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    // ─── TIMETABLE ──────────────────────────────────────────────────────
+    function getMyClasses() {
+      const role = currentUser.role;
+      if (role === 'student') return classes.filter(c => c.group === currentUser.group);
+      if (role === 'teacher') return classes.filter(c => c.lecturerId === currentUser.id);
+      return classes.filter(c => c.group === currentUser.group); // rep sees all
+    }
+
+    function renderTimetable() {
+      const tabsEl = document.getElementById('day-tabs');
+      tabsEl.innerHTML = DAYS.map(d => `<button class="day-tab ${d === currentDay ? 'active' : ''}" onclick="selectDay('${d}')">${d}</button>`).join('');
+      const myClasses = getMyClasses().filter(c => c.day === currentDay)
+        .sort((a, b) => a.start.localeCompare(b.start));
+      const list = document.getElementById('timetable-list');
+      if (!myClasses.length) {
+        list.innerHTML = `<div class="empty-state"><i class="fas fa-calendar-check"></i><br>No classes on ${currentDay}</div>`;
+        return;
+      }
+      list.innerHTML = myClasses.map(c => renderClassCard(c)).join('');
+    }
+
+    function selectDay(d) { currentDay = d; renderTimetable(); }
+
+    function renderClassCard(c) {
+      const course = COURSES.find(x => x.id === c.courseId) || {};
+      const lec = LECTURERS.find(x => x.id === c.lecturerId) || {};
+      const canReview = currentUser.role === 'student';
+      const canComplete = currentUser.role === 'rep' || currentUser.role === 'teacher';
+      let actions = '';
+      if (canReview) actions += `<button class="btn-sm btn-green" onclick="openReviewModal('${c.id}')"><i class="fas fa-star"></i> Rate</button>`;
+      if (canComplete) actions += `<button class="btn-sm btn-outline" onclick="markComplete('${c.id}')"><i class="fas fa-check"></i> Complete</button>`;
+      return `
+  <div class="class-card">
+    <div class="class-time">
+      <div class="time-start">${c.start}</div>
+      <div class="time-end">${c.end}</div>
+    </div>
+    <div class="class-info">
+      <div class="course-code">${course.code || ''}</div>
+      <div class="course-name">${course.name || 'Unknown Course'}</div>
+      <div class="class-meta">
+        <span><i class="fas fa-user-tie"></i> ${lec.name || 'TBA'}</span>
+        <span><i class="fas fa-map-marker-alt"></i> ${c.venue}</span>
+        <span><i class="fas fa-users"></i> ${c.group}</span>
+      </div>
+    </div>
+    <div class="class-actions">${actions}</div>
+  </div>`;
+    }
+
+    function markComplete(classId) {
+      showToast('Class marked as completed. Review forms are now available!');
+      addNotification({ type: 'reminder', text: 'Class completed. Students can now submit reviews.' });
+    }
+
+    // ─── NOTIFICATIONS ──────────────────────────────────────────────────
+    function renderNotifications() {
+      const list = document.getElementById('notif-list');
+      notifications.slice().reverse().forEach(n => n.read = true);
+      saveData('msomi_notifs', notifications);
+      if (!notifications.length) {
+        list.innerHTML = `<div class="empty-state"><i class="fas fa-bell-slash"></i><br>No notifications yet</div>`;
+        return;
+      }
+      list.innerHTML = notifications.slice().reverse().map(n => `
+    <div class="notif-item ${n.read ? '' : 'unread'} ${n.type === 'announcement' ? 'announcement' : ''}">
+      <div class="notif-icon"><i class="fas ${n.type === 'announcement' ? 'fa-bullhorn' : 'fa-bell'}"></i></div>
+      <div class="notif-body">
+        <div class="notif-title">${n.text}</div>
+        <div class="notif-sub">${n.time}</div>
+      </div>
+    </div>`).join('');
+    }
+
+    function addNotification(obj) {
+      const n = { id: 'n' + Date.now(), read: false, time: new Date().toLocaleTimeString(), ...obj };
+      notifications.push(n);
+      saveData('msomi_notifs', notifications);
+    }
+
+    function scheduleNotifications() {
+      const myClasses = getMyClasses();
+      const now = new Date();
+      const lead = settings.leadTime * 60 * 1000;
+      const todayName = DAYS[now.getDay() === 0 ? 6 : now.getDay() - 1];
+      myClasses.filter(c => c.day === todayName).forEach(c => {
+        const [h, m] = c.start.split(':').map(Number);
+        const classTime = new Date(); classTime.setHours(h, m, 0, 0);
+        const alertTime = classTime.getTime() - lead - now.getTime();
+        const course = COURSES.find(x => x.id === c.courseId) || {};
+        const lec = LECTURERS.find(x => x.id === c.lecturerId) || {};
+        if (alertTime > 0 && alertTime < 3600000) {
+          setTimeout(() => {
+            const msg = `Class starting soon: ${course.code} with ${lec.name} at ${c.venue}`;
+            if (settings.toast) showToast(msg);
+            addNotification({ type: 'reminder', text: msg });
+          }, alertTime);
+        }
+      });
+      // Demo: immediate notification after 3s
+      setTimeout(() => {
+        if (!currentUser) return;
+        const cls = myClasses[0];
+        if (cls) {
+          const course = COURSES.find(x => x.id === cls.courseId) || {};
+          const lec = LECTURERS.find(x => x.id === cls.lecturerId) || {};
+          showToast(`🔔 Reminder: ${course.code} with ${lec.name} at ${cls.venue} — starting in ${settings.leadTime} mins`);
+          addNotification({ type: 'reminder', text: `Class starting soon: ${course.code} with ${lec.name} at ${cls.venue}`, time: 'Just now' });
+        }
+      }, 3000);
+    }
+
+    // ─── REVIEWS ────────────────────────────────────────────────────────
+    function renderReviews() {
+      const role = currentUser.role;
+      document.getElementById('review-subtitle').textContent =
+        role === 'student' ? 'Rate your teachers and see your own ratings' :
+          role === 'teacher' ? 'Rate student participation and view your feedback' :
+            'View aggregated class review reports';
+      renderRateForm();
+      renderReceivedReviews();
+    }
+
+    function renderRateForm() {
+      const area = document.getElementById('rate-form-area');
+      const myClasses = getMyClasses();
+      const role = currentUser.role;
+      if (role === 'rep') {
+        area.innerHTML = `<div class="empty-state"><i class="fas fa-chart-bar"></i><br>See the Reports tab in your dashboard for review summaries.</div>`;
+        return;
+      }
+      area.innerHTML = `
+    <div class="card">
+      <h3 style="font-size:1rem;font-weight:700;color:var(--green-main);margin-bottom:18px">Submit a Review</h3>
+      <div class="form-group">
+        <label>Select Class</label>
+        <select id="review-class-sel">
+          <option value="">Choose a class...</option>
+          ${myClasses.map(c => {
+        const course = COURSES.find(x => x.id === c.courseId) || {};
+        const lec = LECTURERS.find(x => x.id === c.lecturerId) || {};
+        return `<option value="${c.id}">${course.code} — ${c.day} ${c.start} (${lec.name})</option>`;
+      }).join('')}
+        </select>
+      </div>
+      <div class="form-group" id="review-target-group" style="${role === 'teacher' ? '' : 'display:none'}">
+        <label>Student to Rate</label>
+        <select id="review-target-sel">
+          <option value="student1">Amara Osei</option>
+          <option value="student2">Kofi Mensah</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Rating</label>
+        <div class="stars-input" id="star-input">
+          ${[1, 2, 3, 4, 5].map(i => `<button class="star-btn" data-val="${i}" onclick="setStars(${i})">★</button>`).join('')}
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Comment (optional)</label>
+        <textarea id="review-comment" placeholder="Share your thoughts..."></textarea>
+      </div>
+      <button class="btn-primary" style="width:auto;padding:12px 28px" onclick="submitReview()">
+        <i class="fas fa-paper-plane"></i> Submit Review
+      </button>
+    </div>`;
+    }
+
+    function setStars(val) {
+      reviewStarVal = val;
+      document.querySelectorAll('#star-input .star-btn').forEach(b => {
+        b.classList.toggle('active', parseInt(b.dataset.val) <= val);
+      });
+    }
+
+    function submitReview() {
+      const classId = document.getElementById('review-class-sel').value;
+      if (!classId) { showToast('Please select a class.', 'warning'); return; }
+      if (!reviewStarVal) { showToast('Please select a star rating.', 'warning'); return; }
+      const comment = document.getElementById('review-comment').value;
+      const role = currentUser.role;
+      let toRole, toId;
+      if (role === 'student') {
+        const cls = classes.find(c => c.id === classId);
+        toRole = 'teacher'; toId = cls ? cls.lecturerId : '';
+      } else {
+        toRole = 'student';
+        toId = document.getElementById('review-target-sel') ? document.getElementById('review-target-sel').value : '';
+      }
+      reviews.push({
+        id: 'r' + Date.now(), classId, fromRole: role, fromName: currentUser.name,
+        toRole, toId, rating: reviewStarVal, comment, date: new Date().toISOString().split('T')[0]
+      });
+      saveData('msomi_reviews', reviews);
+      reviewStarVal = 0;
+      showToast('Review submitted successfully! ⭐');
+      renderRateForm();
+      renderReceivedReviews();
+    }
+
+    function renderReceivedReviews() {
+      const area = document.getElementById('received-reviews');
+      const role = currentUser.role;
+      let myReviews;
+      if (role === 'student') myReviews = reviews.filter(r => r.toId === currentUser.username);
+      else if (role === 'teacher') myReviews = reviews.filter(r => r.toId === currentUser.id);
+      else {
+        // rep: show aggregate
+        const agg = {};
+        reviews.filter(r => r.toRole === 'teacher').forEach(r => {
+          if (!agg[r.toId]) agg[r.toId] = { total: 0, count: 0, name: '' };
+          agg[r.toId].total += r.rating; agg[r.toId].count++;
+          const l = LECTURERS.find(x => x.id === r.toId); if (l) agg[r.toId].name = l.name;
+        });
+        area.innerHTML = `<div class="section-title">Lecturer Ratings Summary</div>` +
+          Object.entries(agg).map(([id, a]) => `
+        <div class="grade-bar-wrap card" style="margin-bottom:12px">
+          <div class="grade-bar-label"><span>${a.name}</span><span>${(a.total / a.count).toFixed(1)} / 5.0</span></div>
+          <div class="grade-bar-track"><div class="grade-bar-fill" style="width:${(a.total / a.count / 5 * 100).toFixed(0)}%"></div></div>
+        </div>`).join('') || '<div class="empty-state"><i class="fas fa-star"></i><br>No reviews yet</div>';
+        return;
+      }
+      if (!myReviews.length) {
+        area.innerHTML = `<div class="empty-state"><i class="fas fa-star"></i><br>No reviews received yet</div>`;
+        return;
+      }
+      area.innerHTML = myReviews.slice().reverse().map(r => {
+        const course = (() => { const cls = classes.find(c => c.id === r.classId); return cls ? (COURSES.find(x => x.id === cls.courseId) || {}).code : ''; })();
+        return `
+    <div class="review-card">
+      <div class="review-header">
+        <div class="reviewer-avatar">${r.fromName.split(' ').map(n => n[0]).join('').slice(0, 2)}</div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:0.9rem">${r.fromName}</div>
+          <div style="font-size:0.75rem;color:var(--text-light)">${course} · ${r.date}</div>
+        </div>
+        <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+      </div>
+      ${r.comment ? `<div class="review-comment">"${r.comment}"</div>` : ''}
+    </div>`;
+      }).join('');
+    }
+
+    function openReviewModal(classId) {
+      const cls = classes.find(c => c.id === classId);
+      if (!cls) return;
+      const course = COURSES.find(x => x.id === cls.courseId) || {};
+      const lec = LECTURERS.find(x => x.id === cls.lecturerId) || {};
+      document.getElementById('modal-title').textContent = `Rate: ${course.code}`;
+      reviewStarVal = 0;
+      document.getElementById('modal-body').innerHTML = `
+    <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:16px">${lec.name} · ${cls.venue}</p>
+    <div class="form-group">
+      <label>Your Rating</label>
+      <div class="stars-input" id="modal-stars">
+        ${[1, 2, 3, 4, 5].map(i => `<button class="star-btn" data-val="${i}" onclick="setModalStars(${i})">★</button>`).join('')}
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Comment</label>
+      <textarea id="modal-comment" placeholder="Optional feedback..."></textarea>
+    </div>
+    <button class="btn-primary" style="width:100%;margin-top:4px" onclick="submitModalReview('${classId}','${cls.lecturerId}')">Submit</button>`;
+      document.getElementById('review-modal').classList.add('open');
+    }
+
+    function setModalStars(val) {
+      reviewStarVal = val;
+      document.querySelectorAll('#modal-stars .star-btn').forEach(b => {
+        b.classList.toggle('active', parseInt(b.dataset.val) <= val);
+      });
+    }
+
+    function submitModalReview(classId, lecId) {
+      if (!reviewStarVal) { showToast('Select a rating!', 'warning'); return; }
+      const comment = document.getElementById('modal-comment').value;
+      reviews.push({
+        id: 'r' + Date.now(), classId, fromRole: 'student', fromName: currentUser.name,
+        toRole: 'teacher', toId: lecId, rating: reviewStarVal, comment, date: new Date().toISOString().split('T')[0]
+      });
+      saveData('msomi_reviews', reviews);
+      closeModal('review-modal');
+      showToast('Review submitted! ⭐');
+    }
+
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    // ─── CLASS REP DASHBOARD ─────────────────────────────────────────────
+    function populateRepForms() {
+      const cOpts = COURSES.map(c => `<option value="${c.id}">${c.code} - ${c.name}</option>`).join('');
+      const lOpts = LECTURERS.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
+      ['rep-course', 'res-course'].forEach(id => { const el = document.getElementById(id); if (el) { el.innerHTML = '<option value="">Select...</option>' + cOpts; } });
+      const repLec = document.getElementById('rep-lecturer');
+      if (repLec) repLec.innerHTML = '<option value="">Select...</option>' + lOpts;
+    }
+
+    function renderRepDashboard() {
+      const myClasses = classes.filter(c => c.group === currentUser.group);
+      const myReviews = reviews.filter(r => r.toRole === 'teacher');
+      const avgRating = myReviews.length ? (myReviews.reduce((a, r) => a + r.rating, 0) / myReviews.length).toFixed(1) : '—';
+      document.getElementById('rep-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${myClasses.length}</div><div class="stat-label">Classes Scheduled</div></div>
+    <div class="stat-card"><div class="stat-num">${announcements.length}</div><div class="stat-label">Announcements</div></div>
+    <div class="stat-card"><div class="stat-num">${resources.length}</div><div class="stat-label">Resources</div></div>
+    <div class="stat-card"><div class="stat-num">${avgRating}</div><div class="stat-label">Avg Lecturer Rating</div></div>`;
+      renderRepClassList();
+      renderAnnList();
+      renderResourceList();
+      renderRepReports();
+      renderEngagementAnalytics();
+      switchRepTab(activeRepTab);
+    }
+
+    function switchRepTab(tab) {
+      activeRepTab = tab;
+      document.querySelectorAll('[id^="rep-tab-"]').forEach(p => p.classList.remove('active'));
+      const panel = document.getElementById('rep-tab-' + tab);
+      if (panel) panel.classList.add('active');
+      document.querySelectorAll('#rep-dashboard-page .tab-btn').forEach((b, i) => {
+        b.classList.toggle('active', ['schedule', 'announcements', 'resources', 'reports', 'analytics'][i] === tab);
+      });
+    }
+
+    function renderEngagementAnalytics() {
+      const area = document.getElementById('engagement-analytics-area');
+      const groupReviews = reviews.filter(r => {
+        const cls = classes.find(c => c.id === r.classId);
+        return cls && cls.group === currentUser.group;
+      });
+
+      // 1. Average Lecturer Rating for this group
+      const teacherReviews = groupReviews.filter(r => r.toRole === 'teacher');
+      const avgRating = teacherReviews.length ? (teacherReviews.reduce((a, r) => a + r.rating, 0) / teacherReviews.length).toFixed(1) : '—';
+
+      // 2. Most Active Class (by review count)
+      const classActivity = {};
+      groupReviews.forEach(r => {
+        classActivity[r.classId] = (classActivity[r.classId] || 0) + 1;
+      });
+      let mostActiveId = null;
+      let maxReviews = 0;
+      Object.entries(classActivity).forEach(([id, count]) => {
+        if (count > maxReviews) { maxReviews = count; mostActiveId = id; }
+      });
+      const mostActiveCls = classes.find(c => c.id === mostActiveId);
+      const mostActiveName = mostActiveCls ? (COURSES.find(x => x.id === mostActiveCls.courseId) || {}).code : 'None yet';
+
+      // 3. Engagement Score (calculation: reviews * 5 + resources * 10 + announcements * 2)
+      const groupResources = resources.filter(res => {
+        const course = COURSES.find(c => c.id === res.courseId);
+        return true; // Simplified for demo
+      });
+      const score = (groupReviews.length * 5) + (groupResources.length * 10) + (announcements.length * 2);
+
+      area.innerHTML = `
+        <div class="section-title">Engagement Insights</div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-num">${avgRating}</div>
+            <div class="stat-label">Avg Lecturer Rating</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" style="font-size: 1.4rem; padding: 0.5rem 0;">${mostActiveName}</div>
+            <div class="stat-label">Most Active Class</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">${score}</div>
+            <div class="stat-label">Engagement Score</div>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 20px;">
+          <h3 style="font-size:1rem;color:var(--green-main);margin-bottom:12px">Analysis Summary</h3>
+          <p style="font-size:0.85rem;line-height:1.6;color:var(--text-mid)">
+            Based on current activity, your group has a <strong>${score > 100 ? 'High' : score > 50 ? 'Moderate' : 'Low'}</strong> engagement level. 
+            The most popular class is <strong>${mostActiveName}</strong> with ${maxReviews} feedback entries. 
+            Maintain engagement by sharing more resources and providing consistent class reviews.
+          </p>
+        </div>
+      `;
+    }
+
+    function renderRepClassList() {
+      const myClasses = classes.filter(c => c.group === currentUser.group);
+      const list = document.getElementById('rep-class-list');
+      if (!myClasses.length) { list.innerHTML = '<div class="empty-state">No classes added yet</div>'; return; }
+      list.innerHTML = myClasses.sort((a, b) => DAYS.indexOf(a.day) - DAYS.indexOf(b.day)).map(c => {
+        const course = COURSES.find(x => x.id === c.courseId) || {};
+        const lec = LECTURERS.find(x => x.id === c.lecturerId) || {};
+        return `
+    <div class="class-card" style="margin-bottom:12px">
+      <div class="class-time"><div class="time-start">${c.start}</div><div class="time-end">${c.end}</div></div>
+      <div class="class-info">
+        <div class="course-code">${course.code || ''}</div>
+        <div class="course-name">${course.name || 'Unknown'}</div>
+        <div class="class-meta">
+          <span><i class="fas fa-user-tie"></i> ${lec.name || 'TBA'}</span>
+          <span><i class="fas fa-map-marker-alt"></i> ${c.venue}</span>
+          <span><i class="fas fa-calendar"></i> ${c.day}</span>
+        </div>
+      </div>
+      <div class="class-actions" style="z-index:1">
+        <button class="btn-sm btn-outline" onclick="editRepClass('${c.id}')"><i class="fas fa-edit"></i> Edit</button>
+        <button class="btn-sm btn-danger" onclick="deleteRepClass('${c.id}')"><i class="fas fa-trash"></i> Delete</button>
+      </div>
+    </div>`;
+      }).join('');
+    }
+
+    function saveRepClass() {
+      const courseId = document.getElementById('rep-course').value;
+      const lecturerId = document.getElementById('rep-lecturer').value;
+      const day = document.getElementById('rep-day').value;
+      const venue = document.getElementById('rep-venue').value.trim();
+      const start = document.getElementById('rep-start').value;
+      const end = document.getElementById('rep-end').value;
+      const editId = document.getElementById('rep-edit-id').value;
+      if (!courseId || !lecturerId || !venue || !start || !end) { showToast('Please fill all fields.', 'warning'); return; }
+
+      // Check for overlap
+      const hasConflict = classes.some(c => {
+        if (c.day !== day || c.id === editId || c.group !== currentUser.group) return false;
+        return (start < c.end) && (c.start < end);
+      });
+
+      if (hasConflict) {
+        alert("Conflict detected");
+        showToast('Schedule conflict: This time slot overlaps with another class.', 'warning');
+        return;
+      }
+
+      if (editId) {
+        const idx = classes.findIndex(c => c.id === editId);
+        if (idx > -1) classes[idx] = { ...classes[idx], courseId, lecturerId, day, venue, start, end };
+        showToast('Class updated!');
+      } else {
+        classes.push({ id: 'cl' + Date.now(), courseId, lecturerId, day, venue, start, end, group: currentUser.group });
+        showToast('Class added!');
+      }
+      saveData('msomi_classes', classes);
+      clearRepForm();
+      renderRepDashboard();
+    }
+
+    function editRepClass(id) {
+      const c = classes.find(x => x.id === id);
+      if (!c) return;
+      document.getElementById('rep-course').value = c.courseId;
+      document.getElementById('rep-lecturer').value = c.lecturerId;
+      document.getElementById('rep-day').value = c.day;
+      document.getElementById('rep-venue').value = c.venue;
+      document.getElementById('rep-start').value = c.start;
+      document.getElementById('rep-end').value = c.end;
+      document.getElementById('rep-edit-id').value = c.id;
+      switchRepTab('schedule');
+      window.scrollTo(0, 200);
+    }
+
+    function deleteRepClass(id) {
+      classes = classes.filter(c => c.id !== id);
+      saveData('msomi_classes', classes);
+      renderRepDashboard();
+      showToast('Class deleted.', 'warning');
+    }
+
+    function clearRepForm() {
+      ['rep-course', 'rep-lecturer', 'rep-venue', 'rep-start', 'rep-end'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+      });
+      document.getElementById('rep-day').value = 'Monday';
+      document.getElementById('rep-edit-id').value = '';
+    }
+
+    function postAnnouncement() {
+      const title = document.getElementById('ann-title').value.trim();
+      const type = document.getElementById('ann-type').value;
+      const body = document.getElementById('ann-body').value.trim();
+      if (!title || !body) { showToast('Please fill title and message.', 'warning'); return; }
+      announcements.push({ id: 'a' + Date.now(), title, type, body, date: new Date().toISOString().split('T')[0] });
+      saveData('msomi_announcements', announcements);
+      addNotification({ type: 'announcement', text: title + ': ' + body.slice(0, 60) });
+      showToast('Announcement posted and sent to students!');
+      document.getElementById('ann-title').value = '';
+      document.getElementById('ann-body').value = '';
+      renderAnnList();
+      document.getElementById('rep-stats').querySelectorAll('.stat-card')[1].querySelector('.stat-num').textContent = announcements.length;
+    }
+
+    function renderAnnList() {
+      const list = document.getElementById('ann-list');
+      if (!announcements.length) { list.innerHTML = '<div class="empty-state">No announcements yet</div>'; return; }
+      const tags = { holiday: 'tag-holiday', cancel: 'tag-cancel', deadline: 'tag-deadline', general: 'tag-general' };
+      const labels = { holiday: 'Holiday', cancel: 'Cancellation', deadline: 'Deadline', general: 'General' };
+      list.innerHTML = announcements.slice().reverse().map(a => `
+    <div class="review-card">
+      <div class="review-header">
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:0.92rem">${a.title} <span class="announcement-tag ${tags[a.type] || 'tag-general'}">${labels[a.type] || a.type}</span></div>
+          <div style="font-size:0.78rem;color:var(--text-light)">${a.date}</div>
+        </div>
+        <button class="btn-sm btn-danger" onclick="deleteAnn('${a.id}')"><i class="fas fa-trash"></i></button>
+      </div>
+      <p style="font-size:0.85rem;color:var(--text-mid);margin-top:8px">${a.body}</p>
+    </div>`).join('');
+    }
+
+    function deleteAnn(id) {
+      announcements = announcements.filter(a => a.id !== id);
+      saveData('msomi_announcements', announcements);
+      renderAnnList();
+      showToast('Announcement removed.', 'warning');
+    }
+
+    function addResource() {
+      const title = document.getElementById('res-title').value.trim();
+      const courseId = document.getElementById('res-course').value;
+      const link = document.getElementById('res-link').value.trim();
+      if (!title || !courseId || !link) { showToast('Please fill all resource fields.', 'warning'); return; }
+      resources.push({ id: 'res' + Date.now(), title, courseId, link, addedBy: currentUser.name, date: new Date().toISOString().split('T')[0] });
+      saveData('msomi_resources', resources);
+      showToast('Resource added!');
+      document.getElementById('res-title').value = '';
+      document.getElementById('res-link').value = '';
+      renderResourceList();
+    }
+
+    function renderResourceList() {
+      const list = document.getElementById('resource-list');
+      if (!resources.length) { list.innerHTML = '<div class="empty-state">No resources yet</div>'; return; }
+      list.innerHTML = resources.slice().reverse().map(r => {
+        const course = COURSES.find(x => x.id === r.courseId) || {};
+        return `
+    <div class="resource-item">
+      <div class="resource-icon"><i class="fas fa-file-alt"></i></div>
+      <div class="resource-info">
+        <div class="r-title">${r.title}</div>
+        <div class="r-sub">${course.code || ''} · Added by ${r.addedBy} · ${r.date}</div>
+        <a href="${r.link}" target="_blank"><i class="fas fa-external-link-alt"></i> Open Link</a>
+      </div>
+      <button class="btn-sm btn-danger" onclick="deleteResource('${r.id}')"><i class="fas fa-trash"></i></button>
+    </div>`;
+      }).join('');
+    }
+
+    function deleteResource(id) {
+      resources = resources.filter(r => r.id !== id);
+      saveData('msomi_resources', resources);
+      renderResourceList();
+    }
+
+    function renderRepReports() {
+      const area = document.getElementById('rep-reports-area');
+      const avgByLec = {};
+      LECTURERS.forEach(l => {
+        const rs = reviews.filter(r => r.toId === l.id);
+        avgByLec[l.id] = { name: l.name, avg: rs.length ? (rs.reduce((a, r) => a + r.rating, 0) / rs.length).toFixed(1) : 'N/A', count: rs.length };
+      });
+      const classByDay = {};
+      DAYS.forEach(d => classByDay[d] = classes.filter(c => c.day === d && c.group === currentUser.group).length);
+      area.innerHTML = `
+    <div class="section-title">Lecturer Performance</div>
+    ${Object.values(avgByLec).map(l => `
+      <div class="card" style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-weight:600">${l.name}</span>
+          <span style="font-size:0.82rem;color:var(--text-light)">${l.count} review${l.count !== 1 ? 's' : ''}</span>
+        </div>
+        <div class="grade-bar-wrap">
+          <div class="grade-bar-label"><span>Average Rating</span><span>${l.avg} / 5.0</span></div>
+          <div class="grade-bar-track"><div class="grade-bar-fill" style="width:${l.avg !== 'N/A' ? l.avg / 5 * 100 : 0}%"></div></div>
+        </div>
+      </div>`).join('')}
+    <div class="section-title" style="margin-top:24px">Classes Per Day</div>
+    <div class="card">
+      ${DAYS.map(d => `
+        <div class="grade-bar-wrap">
+          <div class="grade-bar-label"><span>${d}</span><span>${classByDay[d]} class${classByDay[d] !== 1 ? 'es' : ''}</span></div>
+          <div class="grade-bar-track"><div class="grade-bar-fill" style="width:${classByDay[d] / 3 * 100}%"></div></div>
+        </div>`).join('')}
+    </div>`;
+    }
+
+    // ─── SETTINGS ───────────────────────────────────────────────────────
+    function toggleSetting(id) {
+      document.getElementById(id).classList.toggle('on');
+    }
+    function saveSettings() {
+      settings.leadTime = parseInt(document.getElementById('lead-time').value) || 30;
+      settings.toast = document.getElementById('toast-toggle').classList.contains('on');
+      settings.sound = document.getElementById('sound-toggle').classList.contains('on');
+      saveData('msomi_settings', settings);
+      showToast('Settings saved!');
+    }
+
+    // ─── REVIEW TABS ────────────────────────────────────────────────────
+    function switchReviewTab(tab) {
+      ['rate', 'received'].forEach(t => {
+        document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+      });
+      document.querySelectorAll('#reviews-page .tab-btn').forEach((b, i) => {
+        b.classList.toggle('active', ['rate', 'received'][i] === tab);
+      });
+    }
+
+    // ─── TOAST ──────────────────────────────────────────────────────────
+    function showToast(msg, type = '') {
+      const container = document.getElementById('toast-container');
+      const div = document.createElement('div');
+      div.className = 'toast' + (type ? ' ' + type : '');
+      const icon = type === 'warning' ? 'fa-exclamation-triangle' : type === 'info' ? 'fa-info-circle' : 'fa-bell';
+      div.innerHTML = `<i class="fas ${icon}"></i><span>${msg}</span>`;
+      container.appendChild(div);
+      setTimeout(() => {
+        div.style.animation = 'fadeOut 0.4s ease forwards';
+        setTimeout(() => div.remove(), 400);
+      }, 4500);
+    }
+
+    // ─── MOBILE ──────────────────────────────────────────────────────────
+    function toggleMobile() {
+      document.getElementById('mobile-menu').classList.toggle('open');
+    }
+  </script>
+</body>
+
+</html>
